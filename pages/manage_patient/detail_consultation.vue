@@ -415,11 +415,11 @@ const fetchMeetingRequests = async () => {
 };
 
 
-// Cek apakah user sudah mengisi form saat komponen di-mount
 onMounted(async () => {
     const token = localStorage.getItem('access_token');
     if (token) {
         try {
+            // Cek apakah punya rekam medis
             const response = await fetch('http://127.0.0.1:8000/api/check-rekam-medis/', {
                 method: 'GET',
                 headers: {
@@ -430,7 +430,28 @@ onMounted(async () => {
 
             if (response.ok) {
                 const data = await response.json();
-                hasFilledForm.value = data.has_rekam_medis; // Asumsikan backend mengembalikan { has_rekam_medis: true/false }
+                hasFilledForm.value = data.has_rekam_medis;
+
+                // Kalau punya rekam medis, cek status request dokter
+                if (data.has_rekam_medis) {
+                    const res = await fetch('http://localhost:8000/api/request/patient/', {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    const reqData = await res.json();
+
+                    if (reqData.success && Array.isArray(reqData.data)) {
+                        const allRejected = reqData.data.every((item: any) => item.status === 'rejected');
+
+                        // Kalau semua request ditolak, izinkan isi form lagi
+                        if (allRejected) {
+                            hasFilledForm.value = false;
+                        }
+                    }
+                }
             } else {
                 console.error('Gagal memeriksa apakah user sudah mengisi form.');
             }
@@ -439,6 +460,6 @@ onMounted(async () => {
         }
     }
 
-    fetchMeetingRequests()
+    fetchMeetingRequests(); // Tetap ambil request untuk keperluan lain
 });
 </script>
