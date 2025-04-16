@@ -62,35 +62,33 @@ const fetchMeetingRequests = async () => {
     error.value = null;
 
     try {
-        const token = localStorage.getItem('access_token');  // Ambil token dari local storage
+        const token = localStorage.getItem('access_token');
 
         const res = await fetch('http://localhost:8000/api/meeting-request/list-dokter/', {
             headers: {
-                'Authorization': `Bearer ${token}`,  // Mengirim token untuk otentikasi
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });
 
-        // Periksa jika response gagal
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
         }
 
-        const data = await res.json();  // Ambil data dari API
+        const data = await res.json();
 
-        // Map data untuk mendapatkan nilai yang diperlukan dan filter berdasarkan status
         people.value = data.data
             .filter((item: any) => item.status === 'pending')
             .map((item: any) => ({
                 id: item.id,
-                nama_lengkap: item.rekam_medis_detail?.nama_lengkap || 'Tanpa Nama',  // Nama default jika tidak ada
+                nama_lengkap: item.rekam_medis_detail?.nama_lengkap || 'Tanpa Nama',
             }));
 
         acceptedMeetings.value = data.data
             .filter((item: any) => item.status === 'approved')
             .map((item: any) => ({
                 id: item.id,
-                nama_lengkap: item.rekam_medis_detail?.nama_lengkap || 'Tanpa Nama',  // Nama default jika tidak ada
+                nama_lengkap: item.rekam_medis_detail?.nama_lengkap || 'Tanpa Nama',
                 status: item.status,
             }));
 
@@ -102,6 +100,5 @@ const fetchMeetingRequests = async () => {
     }
 };
 
-// Panggil fetchMeetingRequests saat komponen pertama kali dimuat
 onMounted(fetchMeetingRequests);
 </script>

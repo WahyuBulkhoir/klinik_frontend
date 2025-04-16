@@ -91,14 +91,13 @@ const selectedDate = ref('')
 const doctorId = ref(route.query.id)
 const token = localStorage.getItem('access_token')
 
-// Notifikasi agar hanya tampil sekali
 let unauthorizedHandled = false
 
 const handleUnauthorized = () => {
     if (!unauthorizedHandled) {
         unauthorizedHandled = true
         alert('Sesi login Anda telah berakhir. Silakan login kembali.')
-        localStorage.removeItem('access_token') // opsional, bersihkan token lama
+        localStorage.removeItem('access_token')
         router.push('/manage_patient/login')
     }
 }
@@ -153,7 +152,6 @@ const createAppointment = async () => {
     const { day, time } = selectedTimes.value[0];
 
     try {
-        // 1. Get doctor's schedules
         const scheduleRes = await fetch(`http://localhost:8000/api/doctor-schedule/${doctorId.value}/`, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -174,7 +172,7 @@ const createAppointment = async () => {
         }
 
         const res = await fetch('http://localhost:8000/api/meeting-request/', {
-            method: 'POST',  // Pastikan metode yang benar
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
@@ -185,27 +183,22 @@ const createAppointment = async () => {
             })
         });
 
-        // 3. Handle response more flexibly
         if (res.ok) {
-            // Success case - don't worry about response format
             alert("Permintaan pertemuan berhasil dibuat!");
             selectedTimes.value = [];
             router.push('/manage_patient');
             return;
         }
 
-        // Error case - try to get error message
         try {
             const errorData = await res.json();
             throw new Error(errorData.detail || "Gagal buat pertemuan");
         } catch (e) {
-            // If JSON parsing fails, use status text
             throw new Error(res.statusText || "Terjadi kesalahan pada server");
         }
 
     } catch (err) {
         console.error("Error:", err);
-        // Don't show alert for successful cases
         if (!err.message.includes("Permintaan pertemuan berhasil dibuat")) {
             alert(err.message || "Terjadi kesalahan saat membuat pertemuan.");
         }

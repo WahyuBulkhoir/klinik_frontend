@@ -155,7 +155,7 @@ const detail = ref<any>(null);
 
 const fetchDetail = async () => {
     try {
-        const token = localStorage.getItem('access_token'); // atau dari store jika pakai Pinia/Vuex
+        const token = localStorage.getItem('access_token');
 
         const res = await fetch(`http://localhost:8000/api/meeting-request/list-dokter/?id=${id}`, {
             headers: {
@@ -170,7 +170,7 @@ const fetchDetail = async () => {
 
         const response = await res.json();
         console.log("API Response:", response);
-        detail.value = response.data[0]; // karena isinya array
+        detail.value = response.data[0];
 
     } catch (error) {
         console.error('Failed to fetch detail:', error);
@@ -197,15 +197,12 @@ const updateStatus = async (status: string) => {
         if (!response.ok) {
             throw new Error(data.error || 'Failed to update status');
         }
-
-        // Menangani jika status berhasil diperbarui
         console.log('Status berhasil diperbarui:', data);
     } catch (error) {
         console.error('Error:', error);
     }
 };
 
-// Fungsi untuk tombol accept dan cancel
 const onAccept = () => updateStatus('approved');
 const onCancel = () => updateStatus('rejected');
 onMounted(fetchDetail);

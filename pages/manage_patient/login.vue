@@ -71,9 +71,8 @@ export default defineComponent({
 
                 localStorage.setItem('access_token', data.access);
                 localStorage.setItem('refresh_token', data.refresh);
-                localStorage.setItem('user_role', data.user.role); // Simpan role di localStorage
+                localStorage.setItem('user_role', data.user.role);
 
-                // Redirect berdasarkan role
                 if (data.user.role === 'doctor') {
                     router.push('/manage_doctor');
                 } else {

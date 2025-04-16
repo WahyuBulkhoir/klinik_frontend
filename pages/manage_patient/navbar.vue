@@ -50,12 +50,12 @@ export default {
     data() {
         return {
             isScrolled: false,
-            isLoggedIn: false, // Initial state for login status
+            isLoggedIn: false,
         };
     },
     mounted() {
         window.addEventListener("scroll", this.handleScroll);
-        this.checkLoginStatus(); // Check login status on mount
+        this.checkLoginStatus();
     },
     beforeDestroy() {
         window.removeEventListener("scroll", this.handleScroll);
@@ -78,22 +78,16 @@ export default {
             }
         },
         checkLoginStatus() {
-            // Logic to check if the user is logged in (could be a call to an API or checking local storage)
-            // For example, using localStorage:
-            this.isLoggedIn = !!localStorage.getItem('access_token'); // Assuming 'user' is set when logged in
+            this.isLoggedIn = !!localStorage.getItem('access_token');
         },
         logout() {
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('user_role');
-            this.checkLoginStatus(); // refresh isLoggedIn
+            this.checkLoginStatus();
             window.location.href = '/manage_patient';
         }
 
     },
 };
 </script>
-
-<style scoped>
-/* Add any additional styles here */
-</style>

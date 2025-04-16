@@ -61,7 +61,7 @@ const submitSettings = async () => {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                skills: skillList.value, // ini jadi array of strings
+                skills: skillList.value,
                 specialty: specialty.value,
                 slogan: slogan.value
             })
@@ -71,7 +71,7 @@ const submitSettings = async () => {
             const data = await res.json()
             skills.value = data.skills
             specialty.value = data.specialty
-            slogan.value = data.slogan  // tambahkan ini
+            slogan.value = data.slogan
         }
 
         if (!res.ok) {
@@ -100,12 +100,9 @@ onMounted(async () => {
     if (res.ok) {
         const data = await res.json()
 
-        // Simpan ke state
         skills.value = data.skills || []
         specialty.value = data.specialty || ''
         slogan.value = data.slogan || ''
-
-        // Gabungkan skills ke input yang bisa diedit ulang
         skillsInput.value = skills.value.join(', ')
     }
 })

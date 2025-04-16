@@ -78,7 +78,6 @@ export default {
         };
     },
     mounted() {
-        // Inisialisasi kosong untuk setiap hari
         this.days.forEach(day => {
             this.schedules[day] = {
                 date: "",
@@ -87,7 +86,6 @@ export default {
             };
         });
 
-        // Ambil jadwal dari backend
         this.loadScheduleFromBackend();
     },
     methods: {
@@ -106,7 +104,6 @@ export default {
 
                 const data = await res.json();
 
-                // Reset semua schedule
                 this.days.forEach(day => {
                     this.schedules[day] = {
                         date: "",
@@ -115,7 +112,6 @@ export default {
                     };
                 });
 
-                // Kelompokkan berdasarkan hari
                 data.forEach((item: any) => {
                     const day = item.hari;
 
@@ -126,11 +122,9 @@ export default {
                             times: [item.jam_mulai]
                         };
                     } else {
-                        // Kalau tanggalnya cocok, tambahkan jamnya
                         if (this.schedules[day].date === item.tanggal) {
                             this.schedules[day].times.push(item.jam_mulai);
                         } else if (!this.schedules[day].date) {
-                            // Kalau belum ada tanggal, set tanggal dan jam
                             this.schedules[day].date = item.tanggal;
                             this.schedules[day].timeRange = item.time_range_label || "";
                             this.schedules[day].times = [item.jam_mulai];

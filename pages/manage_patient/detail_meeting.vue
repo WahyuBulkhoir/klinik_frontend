@@ -64,7 +64,6 @@ onMounted(() => {
     fetchDoctors()
 })
 
-// Filter by name and specialty (case-insensitive)
 const filteredDoctors = computed(() => {
     return doctors.value.filter((doctor) => {
         const matchName = doctor.name?.toLowerCase().includes(searchName.value.toLowerCase())

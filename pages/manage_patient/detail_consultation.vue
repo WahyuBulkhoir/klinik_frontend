@@ -180,7 +180,6 @@
             </div>
 
             <div class="space-y-4">
-                <!-- Loop untuk menampilkan data riwayat pertemuan -->
                 <div v-for="(person, index) in people" :key="index"
                     class="flex items-center justify-between bg-[#fcfcfc] border-2 border-[#3582d7] rounded-lg p-4 cursor-pointer transition-transform transform hover:scale-105">
                     <div>
@@ -206,9 +205,8 @@ import { useRouter } from 'vue-router';
 import FooterSection from '@/pages/manage_patient/footer.vue';
 
 const router = useRouter();
-const warningRef = ref<HTMLElement | null>(null); // Reference to warning div
+const warningRef = ref<HTMLElement | null>(null);
 
-// Data form pasien
 const form = reactive({
     nama_lengkap: '',
     tempat_lahir: '',
@@ -259,7 +257,6 @@ function isFormComplete() {
 }
 
 const submitForm = async () => {
-    // Cek kelengkapan form
     if (!isFormComplete() && !hasFilledForm.value) {
         formWarning.value = true;
 
@@ -279,7 +276,6 @@ const submitForm = async () => {
             return;
         }
 
-        // Fungsi kirim form ke backend
         const sendForm = async (accessToken: string) => {
             const res = await fetch('http://127.0.0.1:8000/api/rekam-medis/', {
                 method: 'POST',
@@ -292,10 +288,8 @@ const submitForm = async () => {
             return res;
         };
 
-        // Pertama kali coba kirim
         let response = await sendForm(token);
 
-        // Kalau token expired, refresh token dulu
         if (response.status === 401) {
             const refreshToken = localStorage.getItem('refresh_token');
             if (!refreshToken) {
@@ -321,7 +315,6 @@ const submitForm = async () => {
                 localStorage.setItem('access_token', token);
             }
 
-            // Coba ulang kirim form dengan token baru
             if (token) {
                 response = await sendForm(token);
             } else {
@@ -329,21 +322,18 @@ const submitForm = async () => {
             }
         }
 
-        // Cek jika kirim gagal
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.detail || 'Gagal menyimpan data.');
         }
 
-        // Kirim berhasil
         const responseData = await response.json();
-        localStorage.setItem('pasien_id', responseData.id); // Simpan ID pasien untuk langkah selanjutnya
+        localStorage.setItem('pasien_id', responseData.id);
         alert('Data berhasil disimpan!');
 
         resetForm();
         hasFilledForm.value = true;
 
-        // Redirect ke halaman pilih dokter
         router.push('/manage_patient/detail_meeting');
     } catch (error) {
         console.error(error);
@@ -351,7 +341,6 @@ const submitForm = async () => {
     }
 };
 
-// Fungsi untuk mereset form
 const resetForm = () => {
     Object.keys(form).forEach(key => {
         form[key as keyof typeof form] = '';
@@ -359,9 +348,9 @@ const resetForm = () => {
 };
 
 const people = ref<any[]>([]);
-const history = reactive<{ values: { id: number; status: string; detail: string }[] }>({ values: [] }); // Define history with a proper type
+const history = reactive<{ values: { id: number; status: string; detail: string }[] }>({ values: [] });
 const loading = ref(false);
-const error = ref<string | null>(null); // Declare the error variable
+const error = ref<string | null>(null);
 
 const fetchMeetingRequests = async () => {
     try {
@@ -419,7 +408,6 @@ onMounted(async () => {
     const token = localStorage.getItem('access_token');
     if (token) {
         try {
-            // Cek apakah punya rekam medis
             const response = await fetch('http://127.0.0.1:8000/api/check-rekam-medis/', {
                 method: 'GET',
                 headers: {
@@ -432,7 +420,6 @@ onMounted(async () => {
                 const data = await response.json();
                 hasFilledForm.value = data.has_rekam_medis;
 
-                // Kalau punya rekam medis, cek status request dokter
                 if (data.has_rekam_medis) {
                     const res = await fetch('http://localhost:8000/api/request/patient/', {
                         headers: {
@@ -446,7 +433,6 @@ onMounted(async () => {
                     if (reqData.success && Array.isArray(reqData.data)) {
                         const allRejected = reqData.data.every((item: any) => item.status === 'rejected');
 
-                        // Kalau semua request ditolak, izinkan isi form lagi
                         if (allRejected) {
                             hasFilledForm.value = false;
                         }
@@ -460,6 +446,6 @@ onMounted(async () => {
         }
     }
 
-    fetchMeetingRequests(); // Tetap ambil request untuk keperluan lain
+    fetchMeetingRequests();
 });
 </script>

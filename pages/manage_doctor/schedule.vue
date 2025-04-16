@@ -61,7 +61,7 @@
 export default {
     data() {
         return {
-            openIndex: null, // Menyimpan index yang sedang terbuka
+            openIndex: null,
             schedules: [],
         };
     },
@@ -84,7 +84,6 @@ export default {
 
                 const data = await response.json();
 
-                // Group jadwal berdasarkan hari
                 const groupedSchedules = {};
 
                 data.forEach(jadwal => {
@@ -96,10 +95,9 @@ export default {
                         };
                     }
 
-                    groupedSchedules[jadwal.hari].times.push(jadwal.jam_mulai.slice(0, 5)); // ambil HH:MM saja
+                    groupedSchedules[jadwal.hari].times.push(jadwal.jam_mulai.slice(0, 5));
                 });
 
-                // Konversi ke array dan simpan ke data schedules
                 this.schedules = Object.values(groupedSchedules);
             } catch (error) {
                 console.error("Error loading schedules:", error);

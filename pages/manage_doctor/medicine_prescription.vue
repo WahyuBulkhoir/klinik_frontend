@@ -105,17 +105,14 @@
 import { ref } from "vue";
 import FooterSection from '@/pages/manage_doctor/footer.vue';
 
-// State untuk menyimpan daftar obat
 const daftarObat = ref([
-    { nama: "", dosis: "", instruksi: "" } // Obat default
+    { nama: "", dosis: "", instruksi: "" }
 ]);
 
-// Fungsi untuk menambah obat baru
 const tambahObat = () => {
     daftarObat.value.push({ nama: "", dosis: "", instruksi: "" });
 };
 
-// Fungsi untuk menghapus obat berdasarkan index
 const hapusObat = (index: number) => {
     daftarObat.value.splice(index, 1);
 };
