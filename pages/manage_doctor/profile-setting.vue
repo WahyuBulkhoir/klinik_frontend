@@ -1,64 +1,64 @@
 <template>
-    <div class="min-h-screen p-10">
-        <h1 class="text-3xl font-bold mb-6">Pengaturan Profil Dokter</h1>
+    <div class="min-h-screen bg-gradient-to-b from-[#EFF5FC] to-[#3582D7] p-4 sm:p-10">
+        <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-6 sm:p-10">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">Pengaturan Profil Dokter</h1>
 
-        <form @submit.prevent="submitSettings" class="space-y-4 max-w-lg">
-            <label class="block mb-2 font-semibold">Keahlian</label>
-            <input v-model="skillsInput" placeholder="Pisahkan dengan koma"
-                class="w-full border border-gray-300 rounded-lg p-2" />
+            <form @submit.prevent="submitSettings" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Keahlian</label>
+                    <input v-model="skillsInput" placeholder="Pisahkan dengan koma (misal: USG, EKG, Bedah)"
+                        class="w-full border border-gray-300 focus:ring-2 focus:ring-[#3582D7] focus:outline-none rounded-lg p-3 transition duration-200" />
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span v-for="(skill, i) in skillList" :key="i"
+                            class="bg-[#EFF5FC] text-[#3582D7] text-sm font-medium px-3 py-1 rounded-full border border-[#3582D7]">
+                            {{ skill }}
+                        </span>
+                    </div>
+                </div>
 
-            <!-- Tampilkan skill secara visual -->
-            <div class="flex flex-wrap gap-2 mt-2">
-                <span v-for="(skill, i) in skillList" :key="i" class="bg-blue-100 px-2 py-1 rounded">
-                    {{ skill }}
-                </span>
-            </div>
-            <div>
-                <label class="block mb-2 font-semibold">Spesialisasi</label>
-                <input v-model="specialty" type="text" placeholder="Contoh: Spesialis Jantung"
-                    class="w-full border border-gray-300 rounded-lg p-2" />
-            </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Spesialisasi</label>
+                    <input v-model="specialty" type="text" placeholder="Contoh: Spesialis Jantung"
+                        class="w-full border border-gray-300 focus:ring-2 focus:ring-[#3582D7] focus:outline-none rounded-lg p-3 transition duration-200" />
+                </div>
 
-            <div>
-                <label class="block mb-2 font-semibold">Slogan</label>
-                <input v-model="slogan" type="text" placeholder="Contoh: Menyembuhkan dengan sepenuh hati"
-                    class="w-full border border-gray-300 rounded-lg p-2" />
-            </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Slogan</label>
+                    <input v-model="slogan" type="text" placeholder="Contoh: Menyembuhkan dengan sepenuh hati"
+                        class="w-full border border-gray-300 focus:ring-2 focus:ring-[#3582D7] focus:outline-none rounded-lg p-3 transition duration-200" />
+                </div>
 
-            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
-                Simpan
-            </button>
-        </form>
+                <div class="flex justify-end">
+                    <button type="submit"
+                        class="bg-gradient-to-r from-[#3582D7] to-blue-600 hover:opacity-90 active:scale-95 transition transform text-white font-semibold px-6 py-2 rounded-lg shadow-lg">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthenticatedFetch } from '@/utils/useAuthenticatedFetch'
+
 const skillsInput = ref("")
 const skillList = computed(() => {
     return skillsInput.value.split(',').map(s => s.trim()).filter(Boolean)
 })
 const slogan = ref('')
-
 const router = useRouter()
 const skills = ref<string[]>([])
 const specialty = ref('')
 
 const submitSettings = async () => {
-    const token = localStorage.getItem('access_token')
-    if (!token) {
-        alert("Token tidak ditemukan. Silakan login kembali.")
-        router.push('/manage_patient/login')
-        return
-    }
-
     try {
-        const res = await fetch('http://localhost:8000/api/doctor/settings/', {
+        const res = await useAuthenticatedFetch('http://localhost:8000/api/doctor/settings/', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 skills: skillList.value,
@@ -72,38 +72,34 @@ const submitSettings = async () => {
             skills.value = data.skills
             specialty.value = data.specialty
             slogan.value = data.slogan
-        }
 
-        if (!res.ok) {
+            alert("Profil berhasil diperbarui")
+            router.push('/manage_doctor')
+        } else {
             const errorData = await res.json()
             console.error("Gagal simpan:", errorData)
             throw new Error("Gagal menyimpan data: " + (errorData?.detail || res.statusText))
         }
-
-        alert("Profil berhasil diperbarui")
-        router.push('/manage_doctor')
     } catch (err) {
         alert("Terjadi kesalahan: " + (err as Error).message)
     }
 }
 
 onMounted(async () => {
-    const token = localStorage.getItem('access_token')
-    if (!token) return
+    try {
+        const res = await useAuthenticatedFetch('http://localhost:8000/api/doctor/settings/')
 
-    const res = await fetch('http://localhost:8000/api/doctor/settings/', {
-        headers: {
-            'Authorization': `Bearer ${token}`
+        if (res.ok) {
+            const data = await res.json()
+            skills.value = data.skills || []
+            specialty.value = data.specialty || ''
+            slogan.value = data.slogan || ''
+            skillsInput.value = skills.value.join(', ')
+        } else {
+            console.warn("Gagal mengambil data pengaturan dokter.")
         }
-    })
-
-    if (res.ok) {
-        const data = await res.json()
-
-        skills.value = data.skills || []
-        specialty.value = data.specialty || ''
-        slogan.value = data.slogan || ''
-        skillsInput.value = skills.value.join(', ')
+    } catch (err) {
+        console.error("Terjadi kesalahan saat fetch:", (err as Error).message)
     }
 })
 </script>

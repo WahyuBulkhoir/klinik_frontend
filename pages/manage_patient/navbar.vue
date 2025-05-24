@@ -1,6 +1,5 @@
 <template>
     <div class="bg-gray-100 text-gray-900 relative">
-        <!-- Navbar -->
         <header
             :class="['bg-white shadow-md fixed top-0 left-0 w-full z-50 transition-shadow', { 'shadow-lg': isScrolled }]">
             <nav class="flex items-center justify-between p-2 md:px-10 lg:px-20">
@@ -22,7 +21,6 @@
                         class="hover:text-blue-700">About</a>
                 </div>
                 <div class="hidden md:flex space-x-4">
-                    <!-- Conditional rendering based on authentication state -->
                     <template v-if="isLoggedIn">
                         <button @click="logout" class="px-4 py-2 bg-red-600 text-white rounded-lg">Logout</button>
                     </template>
@@ -38,7 +36,6 @@
             </nav>
         </header>
 
-        <!-- Main Content -->
         <main class="container mx-auto pt-20">
             <slot />
         </main>

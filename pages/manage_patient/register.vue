@@ -10,7 +10,6 @@
             </div>
         </nav>
 
-        <!-- Wrapper untuk Form Register -->
         <div class="ml-16 flex flex-col w-1/3">
             <form class="space-y-4" @submit.prevent="handleRegister">
                 <div>
@@ -47,7 +46,6 @@
             </div>
         </div>
 
-        <!-- Background Image di Kanan -->
         <img class="absolute top-24 right-20 w-[800px] object-contain hover:scale-105 transition-transform duration-300"
             src="/img/bg_vector.png" alt="Background" />
         <img class="absolute top-24 right-20 w-[700px] object-contain hover:scale-105 transition-transform duration-300"

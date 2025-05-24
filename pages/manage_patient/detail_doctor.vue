@@ -1,41 +1,31 @@
 <template>
     <div class="min-h-screen flex flex-col text-gray-600 font-poppins">
-        <!-- Background Effect -->
         <div class="absolute top-[703px] left-[-253px] blur-[61.5px] rounded-full w-[46px] h-[314px]"></div>
 
-        <!-- Header -->
         <div class="flex items-center justify-center mt-10 w-[100%] mx-auto gap-20">
-            <!-- Doctor Image -->
             <img class="w-[500px] h-auto object-cover rounded-full cursor-pointer transition-transform transform hover:scale-105"
                 alt="Doctor Icon" src="/public/img/icon_doctor.png" />
-            <!-- Doctor Info -->
             <div class="mx-[150px] ml-0 mt-0 cursor-pointer transition-transform transform hover:scale-105">
                 <h1 class="text-[40px] font-extrabold">dr. {{ doctor?.name || 'Loading...' }}</h1>
                 <h2 class="text-[20px] font-medium text-gray-500">{{ doctor?.email }}</h2>
             </div>
         </div>
 
-        <!-- Separator Line -->
         <div class="w-[80%] mt-2 h-2 bg-gradient-to-r from-[#4bb649] to-[#3582d7] mx-auto"></div>
 
-        <!-- Content Section -->
         <div class="flex w-[50%] mx-auto mt-20 mb-20 gap-10 relative">
-            <!-- Keahlian Title -->
             <h3 class="absolute top-[-20px] left-0 text-2xl font-bold" :style="{ fontFamily: 'Kaushan Script' }">
                 Keahlian
             </h3>
-            <!-- Keahlian Section -->
             <div class="w-1/2 bg-white border border-green-500 rounded-[10px] p-6 mt-6">
                 <ul class="space-y-2 font-medium text-xl">
                     <li v-for="(skill, index) in skills" :key="index">{{ skill }}</li>
                 </ul>
             </div>
 
-            <!-- Jadwal Title -->
             <h3 class="absolute top-[-20px] left-[53%] text-2xl font-bold" :style="{ fontFamily: 'Kaushan Script' }">
                 Jadwal
             </h3>
-            <!-- Jadwal Section -->
             <div class="w-1/2 bg-white border border-green-500 rounded-[10px] p-6 mt-6 transition-all duration-300">
                 <div v-for="(hours, day) in schedule" :key="day" class="border-b py-2">
                     <div @click="toggleAccordion(day)" class="flex justify-between items-center cursor-pointer">
@@ -61,7 +51,6 @@
                                 class="text-red-500 hover:text-red-700 text-sm">❌</button>
                         </li>
                     </ul>
-                    <!-- Tombol Buat Pertemuan -->
                     <button @click="createAppointment"
                         class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
                         Buat Pertemuan
@@ -70,7 +59,6 @@
             </div>
         </div>
 
-        <!-- Footer -->
         <FooterSection id="footer" />
     </div>
 </template>
@@ -78,6 +66,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useAuthenticatedFetch } from '@/utils/useAuthenticatedFetch';
 
 const route = useRoute()
 const router = useRouter()
@@ -106,11 +95,7 @@ const skills = ref([])
 
 const fetchDoctorProfile = async () => {
     try {
-        const res = await fetch(`http://localhost:8000/api/doctors/${doctorId.value}/`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
+        const res = await useAuthenticatedFetch(`http://localhost:8000/api/doctors/${doctorId.value}/`)
         if (res.status === 401) return handleUnauthorized()
         if (!res.ok) throw new Error("Profil tidak ditemukan")
         const data = await res.json()
@@ -123,11 +108,7 @@ const fetchDoctorProfile = async () => {
 
 const fetchDoctorSchedule = async () => {
     try {
-        const res = await fetch(`http://localhost:8000/api/doctor-schedule/${doctorId.value}/`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
+        const res = await useAuthenticatedFetch(`http://localhost:8000/api/doctor-schedule/${doctorId.value}/`)
         if (res.status === 401) return handleUnauthorized()
         if (!res.ok) throw new Error("Gagal ambil jadwal")
         const jadwals = await res.json()
@@ -152,12 +133,7 @@ const createAppointment = async () => {
     const { day, time } = selectedTimes.value[0];
 
     try {
-        const scheduleRes = await fetch(`http://localhost:8000/api/doctor-schedule/${doctorId.value}/`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
+        const scheduleRes = await useAuthenticatedFetch(`http://localhost:8000/api/doctor-schedule/${doctorId.value}/`)
         if (scheduleRes.status === 401) return handleUnauthorized();
         if (!scheduleRes.ok) throw new Error("Gagal ambil jadwal dokter");
 
@@ -171,17 +147,16 @@ const createAppointment = async () => {
             throw new Error("Jadwal tidak ditemukan");
         }
 
-        const res = await fetch('http://localhost:8000/api/meeting-request/', {
+        const res = await useAuthenticatedFetch('http://localhost:8000/api/meeting-request/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
                 dokter: doctorId.value,
                 jadwal: matchingSchedule.id,
             })
-        });
+        })
 
         if (res.ok) {
             alert("Permintaan pertemuan berhasil dibuat!");
@@ -224,6 +199,8 @@ onMounted(() => {
     fetchDoctorSchedule()
 });
 </script>
+
+
 
 <style scoped>
 .rotate-90 {

@@ -1,6 +1,5 @@
 <template>
     <div class="bg-gray-100 text-gray-900 relative">
-        <!-- Navbar -->
         <header
             :class="['bg-gradient-to-r from-[#fcfdfe] to-[#3582d7] to-[56.4%] shadow-md fixed top-0 left-0 w-full z-50 transition-shadow', { 'shadow-lg': isScrolled }]">
             <nav class="flex items-center justify-between p-2 md:px-10 lg:px-20">
@@ -23,13 +22,11 @@
                     :style="{ fontFamily: 'Koulen' }">
                     <p>Hallo, Doctor!</p>
 
-                    <!-- Accordion Trigger -->
                     <button @click="toggleDropdown"
                         class="px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-600 transition relative z-10">
                         ☰ Menu
                     </button>
 
-                    <!-- Dropdown Menu -->
                     <div v-if="dropdownOpen"
                         class="absolute top-14 right-0 bg-white text-gray-700 rounded-lg shadow-md w-40 z-20">
                         <a @click="goToSetting" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">Setting</a>
@@ -43,7 +40,6 @@
             </nav>
         </header>
 
-        <!-- Main Content -->
         <main class="container mx-auto pt-20">
             <slot />
         </main>

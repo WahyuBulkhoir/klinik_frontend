@@ -1,6 +1,5 @@
 <template>
     <div class="relative w-full h-screen bg-gray-50 flex items-center overflow-hidden">
-        <!-- Navbar di Pojok Kiri Atas -->
         <nav class="absolute top-0 left-16 p-4">
             <div class="flex flex-col items-center">
                 <img class="w-16 h-16" src="/img/upper_logo.png" alt="Logo" />
@@ -11,7 +10,6 @@
             </div>
         </nav>
 
-        <!-- Wrapper untuk Form Login -->
         <div class="ml-16 flex flex-col w-1/3">
             <form class="space-y-4" @submit.prevent="handleLogin">
                 <div>
@@ -36,7 +34,6 @@
                 </NuxtLink>
             </div>
         </div>
-        <!-- Background Image di Kanan -->
         <img class="absolute top-24 right-20 w-[800px] object-contain hover:scale-105 transition-transform duration-300"
             src="/img/bg_vector.png" alt="Background" />
         <img class="absolute top-24 right-20 w-[700px] object-contain hover:scale-105 transition-transform duration-300"

@@ -1,8 +1,6 @@
 <template>
     <div class="w-full text-left text-[13px] font-[Poppins] text-black py-0 bg-gray-100">
-        <!-- Kontainer Utama -->
         <div class="flex justify-between items-center w-[50%] mx-auto mt-6">
-            <!-- Logo dan Nama -->
             <div class="flex items-center justify-between space-y-2">
                 <img class="w-[150px] h-auto" alt="Logo" src="/public/img/upper_logo.png" />
                 <b class="text-[20px] tracking-[0.55em] bg-gradient-to-r from-[#4bb649] to-[#3582d7] bg-clip-text text-transparent"
@@ -11,9 +9,7 @@
                 </b>
             </div>
 
-            <!-- Section Kontak dan Sosial Media -->
             <div class="flex flex-col items-start text-[15px] space-y-4">
-                <!-- Kontak -->
                 <div>
                     <h3 class="font-semibold">Kontak</h3>
                     <h6 class="font-medium">Pusat Konsultasi :</h6>
@@ -21,8 +17,6 @@
                     <h6 class="font-medium">Email Kemitraan :</h6>
                     <p class="font-light">manaclic@gmail.com</p>
                 </div>
-
-                <!-- Sosial Media -->
                 <div class="flex space-x-4 items-center">
                     <img class=" h-[30px] object-cover" alt="Instagram" src="/public/img/instagram.svg" />
                     <img class=" h-[30px] object-cover" alt="Facebook" src="/public/img/facebook.svg" />
@@ -32,7 +26,6 @@
             </div>
         </div>
 
-        <!-- Garis Bawah -->
         <div class="mx-28 mt-10 py-10 bg-gradient-to-r from-[#fcfdfe] to-[#3582d7] to-[56.4%] shadow-md">
             <p class="text-[15px] text-white text-center ml-0">@ 2025 GluonIT Software House. All
                 Rights

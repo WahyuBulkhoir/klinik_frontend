@@ -9,7 +9,6 @@
                 <div class="w-24 h-1 bg-white mx-auto mt-2"></div>
             </div>
 
-            <!-- FILTERS -->
             <div class="w-full max-w-3xl mt-6 flex flex-col sm:flex-row gap-4 px-4">
                 <input v-model="searchName" type="text" placeholder="Cari nama dokter..."
                     class="flex-1 px-4 py-2 rounded-xl shadow focus:outline-none" />
@@ -17,7 +16,6 @@
                     class="flex-1 px-4 py-2 rounded-xl shadow focus:outline-none" />
             </div>
 
-            <!-- DOCTOR LIST -->
             <div
                 class="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-10 mt-10 px-4">
                 <router-link v-for="doctor in filteredDoctors" :key="doctor.id"
@@ -44,7 +42,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue';
+import { useAuthenticatedFetch } from '@/utils/useAuthenticatedFetch';
 
 const doctors = ref([])
 const searchName = ref('')
@@ -52,7 +51,7 @@ const searchSpecialty = ref('')
 
 const fetchDoctors = async () => {
     try {
-        const res = await fetch('http://localhost:8000/api/doctors/')
+        const res = await useAuthenticatedFetch('http://localhost:8000/api/doctors/')
         if (!res.ok) throw new Error('Gagal fetch daftar dokter')
         doctors.value = await res.json()
     } catch (error) {

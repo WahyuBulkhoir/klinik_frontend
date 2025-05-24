@@ -9,7 +9,6 @@
                 Formulir Data Administrasi dan Rekam Medis Pasien
             </h2>
 
-            <!-- JADWAL REQUEST-AN PASIEN -->
             <hr class="border-t-2 border-[#3582d7] my-4" />
             <h3 class="text-xl font-bold text-blue-600 mb-2">Jadwal Request</h3>
             <div class="grid grid-cols-3 gap-4 text-gray-700">
@@ -27,8 +26,6 @@
                 </div>
             </div>
 
-
-            <!-- IDENTITAS PASIEN -->
             <hr class="my-4 border-t-2 border-blue-600">
             <h3 class="text-xl font-bold text-blue-600 mb-2">Identitas Pasien</h3>
             <div class="grid grid-cols-2 gap-4 text-gray-700">
@@ -62,7 +59,6 @@
                 </div>
             </div>
 
-            <!-- PEMBAYARAN -->
             <hr class="my-4 border-t-2 border-blue-600">
             <h3 class="text-xl font-bold text-blue-600 mb-2">Informasi Pembayaran</h3>
             <div class="grid grid-cols-1 gap-4 text-gray-700">
@@ -76,7 +72,6 @@
                 </div>
             </div>
 
-            <!-- KONTAK DARURAT -->
             <hr class="my-4 border-t-2 border-blue-600">
             <h3 class="text-xl font-bold text-blue-600 mb-2">Kontak Darurat</h3>
             <div class="grid grid-cols-3 gap-4 text-gray-700">
@@ -94,7 +89,6 @@
                 </div>
             </div>
 
-            <!-- RIWAYAT KESEHATAN -->
             <hr class="my-4 border-t-2 border-blue-600">
             <h3 class="text-xl font-bold text-blue-600 mb-2">Riwayat Kesehatan</h3>
             <div class="grid grid-cols-2 gap-4 text-gray-700">
@@ -116,7 +110,6 @@
                 </div>
             </div>
 
-            <!-- GAYA HIDUP -->
             <hr class="my-4 border-t-2 border-blue-600">
             <h3 class="text-xl font-bold text-blue-600 mb-2">Riwayat Kesehatan</h3>
             <div class="grid grid-cols-2 gap-4 text-gray-700">
@@ -144,66 +137,68 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
-import { ref, onMounted } from 'vue';
-import FooterSection from '@/pages/manage_doctor/footer.vue';
+import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import FooterSection from '@/pages/manage_doctor/footer.vue'
+import { useAuthenticatedFetch } from '@/utils/useAuthenticatedFetch'
 
-const route = useRoute();
-const id = route.query.id as string;
+const route = useRoute()
+const id = route.query.id as string
 
-const detail = ref<any>(null);
+const detail = ref<any>(null)
 
 const fetchDetail = async () => {
     try {
-        const token = localStorage.getItem('access_token');
-
-        const res = await fetch(`http://localhost:8000/api/meeting-request/list-dokter/?id=${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
+        const res = await useAuthenticatedFetch(
+            `http://localhost:8000/api/meeting-request/list-dokter/?id=${id}`,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             }
-        });
+        )
 
         if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+            throw new Error(`HTTP error! status: ${res.status}`)
         }
 
-        const response = await res.json();
-        console.log("API Response:", response);
-        detail.value = response.data[0];
-
+        const response = await res.json()
+        console.log('API Response:', response)
+        detail.value = response.data[0]
     } catch (error) {
-        console.error('Failed to fetch detail:', error);
+        console.error('Failed to fetch detail:', error)
     }
-};
+}
 
 const updateStatus = async (status: string) => {
     try {
-        const token = localStorage.getItem('access_token');
-        const response = await fetch('http://localhost:8000/api/meeting-request/update-status/', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                meeting_id: id,
-                status: status
-            }),
-        });
+        const response = await useAuthenticatedFetch(
+            'http://localhost:8000/api/meeting-request/update-status/',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    meeting_id: id,
+                    status: status
+                })
+            }
+        )
 
-        const data = await response.json();
+        const data = await response.json()
 
         if (!response.ok) {
-            throw new Error(data.error || 'Failed to update status');
+            throw new Error(data.error || 'Failed to update status')
         }
-        console.log('Status berhasil diperbarui:', data);
-    } catch (error) {
-        console.error('Error:', error);
-    }
-};
 
-const onAccept = () => updateStatus('approved');
-const onCancel = () => updateStatus('rejected');
-onMounted(fetchDetail);
+        console.log('Status berhasil diperbarui:', data)
+    } catch (error) {
+        console.error('Error:', error)
+    }
+}
+
+const onAccept = () => updateStatus('approved')
+const onCancel = () => updateStatus('rejected')
+onMounted(fetchDetail)
 </script>

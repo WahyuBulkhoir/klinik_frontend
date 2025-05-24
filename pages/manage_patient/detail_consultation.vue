@@ -4,15 +4,12 @@
             class="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded">
             Mohon lengkapi semua data terlebih dahulu sebelum mengirimkan form.
         </div>
-
         <div v-if="!hasFilledForm"
             class="w-full max-w-6xl bg-white shadow-lg rounded-lg p-6 border border-green-500 mb-10">
             <div class="bg-gradient-to-r from-[#4bb649] to-[#3582d7] text-white text-2xl font-normal p-4 rounded-lg mb-6"
                 :style="{ fontFamily: 'Kaushan Script' }">
                 Formulir Data Administrasi dan Rekam Medis Pasien
             </div>
-
-            <!-- IDENTITAS PASIEN -->
             <h1 class="text-xl font-semibold text-green-600 mb-4">Identitas Pasien</h1>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -58,10 +55,7 @@
                 </div>
             </div>
 
-            <!-- PEMBATAS -->
             <div class="w-full h-1 bg-gradient-to-r from-[#4bb649] to-[#3582d7] mx-auto mt-5"></div>
-
-            <!-- PEMBAYARAN -->
             <h2 class="text-xl font-bold text-green-600 mt-6">Informasi Pembayaran</h2>
             <div class="grid grid-cols-1 gap-4 mt-2">
                 <div>
@@ -82,8 +76,6 @@
             </div>
 
             <div class="w-full h-1 bg-gradient-to-r from-[#4bb649] to-[#3582d7] mx-auto mt-5"></div>
-
-            <!-- KONTAK DARURAT -->
             <h2 class="text-xl font-bold text-green-600 mt-6">Kontak Darurat</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
                 <div>
@@ -110,8 +102,6 @@
             </div>
 
             <div class="w-full h-1 bg-gradient-to-r from-[#4bb649] to-[#3582d7] mx-auto mt-5"></div>
-
-            <!-- RIWAYAT KESEHATAN -->
             <h2 class="text-xl font-bold text-green-600 mt-6">Riwayat Kesehatan</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                 <div>
@@ -137,8 +127,6 @@
             </div>
 
             <div class="w-full h-1 bg-gradient-to-r from-[#4bb649] to-[#3582d7] mx-auto mt-5"></div>
-
-            <!-- GAYA HIDUP -->
             <h2 class="text-xl font-bold text-green-600 mt-6">Gaya Hidup</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                 <div>
@@ -159,7 +147,6 @@
                 </div>
             </div>
 
-            <!-- TOMBOL KIRIM -->
             <div class="flex justify-center mt-6">
                 <button @click="submitForm"
                     class="rounded-lg bg-[#3582d7] text-white px-8 py-3 text-[20px] hover:bg-[#4bb649] transition-colors duration-300 flex items-center">
@@ -168,11 +155,16 @@
                 </button>
             </div>
         </div>
-        <div v-else class="text-center text-green-600 font-bold text-lg">
+
+        <div v-else
+            class="text-green-600 font-bold text-lg w-full max-w-6xl bg-white shadow-lg rounded-lg p-6 border border-green-500 mb-10">
+            <div class="bg-gradient-to-r from-[#4bb649] to-[#3582d7] text-white text-2xl font-normal p-4 rounded-lg mb-6"
+                :style="{ fontFamily: 'Kaushan Script' }">
+                Formulir Data Administrasi dan Rekam Medis Pasien
+            </div>
             Anda sudah mengisi formulir ini.
         </div>
 
-        <!-- Bagian bawah Riwayat Pertemuan -->
         <div class="w-full max-w-6xl bg-white shadow-lg rounded-lg p-6 border border-green-500 mb-10">
             <div
                 class="bg-gradient-to-r from-[#4bb649] to-[#3582d7] text-white text-2xl font-normal p-4 rounded-lg mb-6">
@@ -186,15 +178,13 @@
                         <b class="text-lg">{{ person.statusLabel }}</b>
                         <p class="text-sm text-gray-500">Status: {{ person.detailStatus }}</p>
                     </div>
-                    <NuxtLink :to="`/manage_doctor/detail_meet-request?id=${person.id}`"
+                    <NuxtLink :to="`/manage_patient/detail_riwayat_medical?meeting_request_id=${person.id}`"
                         class="text-gray-600 hover:text-blue-600">
                         See details
                     </NuxtLink>
                 </div>
             </div>
         </div>
-
-
         <FooterSection id="footer" />
     </div>
 </template>
@@ -203,6 +193,7 @@
 import { reactive, ref, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import FooterSection from '@/pages/manage_patient/footer.vue';
+import { useAuthenticatedFetch } from '@/utils/useAuthenticatedFetch';
 
 const router = useRouter();
 const warningRef = ref<HTMLElement | null>(null);
@@ -212,7 +203,7 @@ const form = reactive({
     tempat_lahir: '',
     tanggal_lahir: '',
     jenis_kelamin: '',
-    golongan_darah: "",
+    golongan_darah: '',
     no_hp: '',
     email: '',
     jenis_kepesertaan: '',
@@ -233,24 +224,10 @@ const hasFilledForm = ref(false);
 
 function isFormComplete() {
     const requiredFields = [
-        'nama_lengkap',
-        'tempat_lahir',
-        'tanggal_lahir',
-        'jenis_kelamin',
-        'golongan_darah',
-        'no_hp',
-        'email',
-        'jenis_kepesertaan',
-        'nomor_kartu',
-        'nama_kontak_darurat',
-        'hubungan_kontak',
-        'no_hp_kontak',
-        'riwayat_penyakit',
-        'alergi_obat_makanan',
-        'riwayat_operasi',
-        'riwayat_pengobatan',
-        'merokok',
-        'konsumsi_alkohol'
+        'nama_lengkap', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'golongan_darah',
+        'no_hp', 'email', 'jenis_kepesertaan', 'nomor_kartu', 'nama_kontak_darurat',
+        'hubungan_kontak', 'no_hp_kontak', 'riwayat_penyakit', 'alergi_obat_makanan',
+        'riwayat_operasi', 'riwayat_pengobatan', 'merokok', 'konsumsi_alkohol'
     ];
 
     return requiredFields.every(field => form[field as keyof typeof form] !== '');
@@ -270,57 +247,13 @@ const submitForm = async () => {
     formWarning.value = false;
 
     try {
-        let token = localStorage.getItem('access_token');
-        if (!token) {
-            router.push('/manage_patient/login');
-            return;
-        }
-
-        const sendForm = async (accessToken: string) => {
-            const res = await fetch('http://127.0.0.1:8000/api/rekam-medis/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-                body: JSON.stringify(form),
-            });
-            return res;
-        };
-
-        let response = await sendForm(token);
-
-        if (response.status === 401) {
-            const refreshToken = localStorage.getItem('refresh_token');
-            if (!refreshToken) {
-                router.push('/manage_patient/login');
-                return;
-            }
-
-            const refreshResponse = await fetch('http://127.0.0.1:8000/api/token/refresh/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ refresh: refreshToken }),
-            });
-
-            if (!refreshResponse.ok) {
-                throw new Error('Sesi Anda telah habis. Silakan login ulang.');
-            }
-
-            const refreshData = await refreshResponse.json();
-            token = refreshData.access;
-            if (token) {
-                localStorage.setItem('access_token', token);
-            }
-
-            if (token) {
-                response = await sendForm(token);
-            } else {
-                throw new Error('Token is null. Please log in again.');
-            }
-        }
+        const response = await useAuthenticatedFetch('http://127.0.0.1:8000/api/rekam-medis/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(form),
+        });
 
         if (!response.ok) {
             const errorData = await response.json();
@@ -348,20 +281,19 @@ const resetForm = () => {
 };
 
 const people = ref<any[]>([]);
-const history = reactive<{ values: { id: number; status: string; detail: string }[] }>({ values: [] });
 const loading = ref(false);
-const error = ref<string | null>(null);
 
 const fetchMeetingRequests = async () => {
     try {
-        const token = localStorage.getItem('access_token');
+        loading.value = true;
 
-        const res = await fetch('http://localhost:8000/api/request/patient/', {
+        const res = await useAuthenticatedFetch('http://localhost:8000/api/request/patient/', {
             headers: {
-                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });
+
+        if (!res.ok) throw new Error('Gagal mengambil data');
 
         const data = await res.json();
 
@@ -403,47 +335,39 @@ const fetchMeetingRequests = async () => {
     }
 };
 
-
 onMounted(async () => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-        try {
-            const response = await fetch('http://127.0.0.1:8000/api/check-rekam-medis/', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
+    try {
+        const response = await useAuthenticatedFetch('http://127.0.0.1:8000/api/check-rekam-medis/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
-            if (response.ok) {
-                const data = await response.json();
-                hasFilledForm.value = data.has_rekam_medis;
+        if (response.ok) {
+            const data = await response.json();
+            hasFilledForm.value = data.has_rekam_medis;
 
-                if (data.has_rekam_medis) {
-                    const res = await fetch('http://localhost:8000/api/request/patient/', {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        },
-                    });
+            if (data.has_rekam_medis) {
+                const reqRes = await useAuthenticatedFetch('http://localhost:8000/api/request/patient/', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-                    const reqData = await res.json();
-
-                    if (reqData.success && Array.isArray(reqData.data)) {
-                        const allRejected = reqData.data.every((item: any) => item.status === 'rejected');
-
-                        if (allRejected) {
-                            hasFilledForm.value = false;
-                        }
+                if (reqRes.ok) {
+                    const reqData = await reqRes.json();
+                    const allRejected = reqData.data.every((item: any) => item.status === 'rejected');
+                    if (allRejected) {
+                        hasFilledForm.value = false;
                     }
                 }
-            } else {
-                console.error('Gagal memeriksa apakah user sudah mengisi form.');
             }
-        } catch (error) {
-            console.error('Terjadi kesalahan saat memeriksa:', error);
+        } else {
+            console.error('Gagal memeriksa apakah user sudah mengisi form.');
         }
+    } catch (error) {
+        console.error('Terjadi kesalahan saat memeriksa:', error);
     }
 
     fetchMeetingRequests();

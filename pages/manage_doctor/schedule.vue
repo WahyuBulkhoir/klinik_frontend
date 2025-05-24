@@ -1,12 +1,10 @@
 <template>
     <div class="relative w-full min-h-screen bg-white text-[20px] text-white mb-20" :style="{ fontFamily: 'Poppins' }">
-        <!-- Header -->
         <div class="bg-gradient-to-r from-[#eff5fc] to-[#3582d7] h-[119px] flex flex-col justify-center items-center">
             <h1 class="text-xl font-bold">SCHEDULE</h1>
             <div class="w-32 h-1 bg-white mt-1"></div>
         </div>
 
-        <!-- Tombol Set Schedule -->
         <div class="flex justify-center space-x-6 mt-6 cursor-pointer transition-transform transform hover:scale-105">
             <a href="/manage_doctor/detail_set-schedule"
                 class="bg-[#3582d7] text-white font-semibold rounded-lg px-6 py-3 shadow-md">
@@ -14,11 +12,9 @@
             </a>
         </div>
 
-        <!-- Daftar Jadwal (Accordion) -->
         <div class="mt-8 mx-auto w-[90%] max-w-[1259px] text-[#656565]">
             <div v-for="(schedule, index) in schedules" :key="index"
                 class="bg-white border border-[#3582d7] rounded-lg shadow-sm mb-4 cursor-pointer transition-transform transform hover:scale-105">
-                <!-- Tombol Accordion -->
                 <button @click="toggleSchedule(index)"
                     class="w-full px-6 py-4 flex justify-between items-center font-medium text-left focus:outline-none">
                     <span class="text-gray-700 font-semibold">{{ schedule.day }}</span>
@@ -31,19 +27,14 @@
                     </svg>
                 </button>
 
-                <!-- Isi Accordion (Tanggal di kiri, Jam di kanan) -->
                 <div v-if="openIndex === index"
                     class="px-6 pb-4 text-[#3582d7] text-sm font-semibold transition-all duration-300">
                     <div class="grid grid-cols-3 gap-2 border-t border-[#3582d7]">
-                        <!-- Tanggal di sebelah kiri -->
                         <div class="col-span-1 flex items-center justify-center text-gray-700 font-medium py-2">
                             {{ schedule.date }}
                         </div>
-
-                        <!-- Garis vertikal pemisah -->
                         <div class="w-[2px] bg-[#3582d7]"></div>
 
-                        <!-- Jam di sebelah kanan -->
                         <div class="col-span-1 flex flex-col space-y-2 py-2">
                             <span v-for="(time, idx) in schedule.times" :key="idx"
                                 class="text-gray-700 font-medium border-b border-green-300 py-2">
@@ -58,6 +49,8 @@
 </template>
 
 <script>
+import { useAuthenticatedFetch } from '@/utils/useAuthenticatedFetch'
+
 export default {
     data() {
         return {
@@ -71,9 +64,8 @@ export default {
         },
         async loadSchedules() {
             try {
-                const response = await fetch("http://localhost:8000/api/doctor-schedule/", {
+                const response = await useAuthenticatedFetch("http://localhost:8000/api/doctor-schedule/", {
                     headers: {
-                        "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
                         "Content-Type": "application/json"
                     }
                 });
@@ -103,8 +95,6 @@ export default {
                 console.error("Error loading schedules:", error);
             }
         }
-
-
     },
     mounted() {
         this.loadSchedules();

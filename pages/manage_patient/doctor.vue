@@ -12,7 +12,7 @@
 
             <div class="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-10 mt-10">
                 <router-link v-for="doctor in doctors" :key="doctor.id"
-                    :to="`/manage_patient/detail_doctor?id=${doctor.id}`"
+                    :to="`/manage_patient/doctor_detail?id=${doctor.id}`"
                     class="bg-white shadow-lg rounded-xl border border-green-500 p-4 relative cursor-pointer transition-transform transform hover:scale-105">
                     <img class="w-full h-44 rounded-t-xl object-cover" alt="Dokter" src="/img/dokter.png" />
                     <div class="mt-4 text-center">
@@ -32,13 +32,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
+import { useAuthenticatedFetch } from '@/utils/useAuthenticatedFetch';
 
 const doctors = ref([])
 
 const fetchDoctors = async () => {
     try {
-        const res = await fetch('http://localhost:8000/api/doctors/')
+        const res = await useAuthenticatedFetch('http://localhost:8000/api/doctors/')
         if (!res.ok) throw new Error('Gagal fetch daftar dokter')
         doctors.value = await res.json()
     } catch (error) {
